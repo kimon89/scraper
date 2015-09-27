@@ -1,7 +1,11 @@
 <?php 
+namespace Sainsburys;
 include "vendor/autoload.php";
 use Sunra\PhpSimple\HtmlDomParser;
 
+/**
+ * The scraper class
+ */
 class Scraper{
 	/**
 	 * Curls the requested url and returns the html in plain text
@@ -21,24 +25,32 @@ class Scraper{
 		curl_setopt( $ch, CURLOPT_COOKIEFILE, 'cookie' );
 		curl_setopt($ch, CURLOPT_URL,$url);
 
-		return curl_exec($ch);
+		$res = curl_exec($ch);
+		if (!$res) {
+			throw new Exception('Curl failed to execute');
+		}
+		return $res;
 	}
 
 	/**
 	 * Create a dom instance from html string
-	 * @param  [type] $url [description]
-	 * @return [type]      [description]
+	 * @param  string $html Html string
+	 * @return object      Dom instance
 	 */
 	static function getDom($html){
 		$dom = HtmlDomParser::str_get_html($html);
+		if (!$dom) {
+			throw new Exception('Failed to initialise DOM');
+		}
+		//add the lenght of the page as an objet attribute
 		$dom->size = strlen($html);
 		return $dom;
 	}
 
 	/**
-	 * [getItemData description]
-	 * @param  [type] $dom [description]
-	 * @return [type]      [description]
+	 * Extract the data (title,size,unit_price,description) from the DOM object
+	 * @param  object $dom Dom object
+	 * @return array      Data exracted from the DOM
 	 */
 	static function getItemData($dom){
 		$itemData = [];
@@ -46,29 +58,12 @@ class Scraper{
 		$description = $dom->find('#information .productText p');
 		$price = $dom->find('.pricePerUnit text');
 		$itemData['title'] = $title[0]->innertext;
+		//divide by 1024 to get the size of the page in kilobytes and round it 
 		$itemData['size'] = round($dom->size/1024,2) . 'kb';
+		//remove the currency sign and trim the string to get the numeric price of the product
 		$itemData['unit_price'] = trim(str_replace('£', '', $price[0]->innertext));
 		$itemData['description'] = $description[0]->innertext;
 		return $itemData;
-	}
-
-	static function generateJson($dom){
-		$data = [
-			'results'	=> [],
-			'total'		=> 0
-		];
-		$elems = $dom->find('.productInfo h3 a');
-		$dom->clear();
-		foreach($elems as $k => $el){
-			$itemData = [];
-			$curlData = Scraper::curlPage($el->href);
-			$dom = Scraper::getDom($curlData);
-			$itemData = Scraper::getItemData($dom);
-			$dom->clear();
-			$data['results'][] = $itemData;
-			$data['total'] += $itemData['unit_price'];
-		}
-		return json_encode($data);
 	}
 }
 
