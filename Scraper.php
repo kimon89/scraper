@@ -12,18 +12,19 @@ class Scraper{
 	 * @param  string $url The destination to grab the html from
 	 * @return string      The html of the page
 	 */
-	static function curlPage($url){
+	static function curlPage($url)
+	{
 		//init curl
 		$ch = curl_init();
 		//website needs user agent and enabled cookies to function properly
 		$agent= 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-		curl_setopt($ch, CURLOPT_COOKIESESSION, true );
+		curl_setopt($ch, CURLOPT_COOKIESESSION, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_COOKIEJAR,   'cookie');
-		curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookie' );
-		curl_setopt($ch, CURLOPT_URL,$url);
+		curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie');
+		curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookie');
+		curl_setopt($ch, CURLOPT_URL, $url);
 
 		$res = curl_exec($ch);
 		if (!$res) {
@@ -37,7 +38,8 @@ class Scraper{
 	 * @param  string $html Html string
 	 * @return object      Dom instance
 	 */
-	static function getDom($html){
+	static function getDom($html)
+	{
 		$dom = HtmlDomParser::str_get_html($html);
 		if (!$dom) {
 			throw new Exception('Failed to initialise DOM');
@@ -52,7 +54,8 @@ class Scraper{
 	 * @param  object $dom Dom object
 	 * @return array      Data exracted from the DOM
 	 */
-	static function getItemData($dom){
+	static function getItemData($dom)
+	{
 		$itemData = [];
 		$title = $dom->find('.productTitleDescriptionContainer h1');
 		$description = $dom->find('#information .productText p');
