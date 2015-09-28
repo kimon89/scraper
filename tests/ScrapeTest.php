@@ -1,5 +1,8 @@
 <?php
 include "Scraper.php";
+
+use Sainsburys\Scraper;
+
 class ScrapeTest extends PHPUnit_Framework_TestCase
 {
 	public $html = '';
@@ -19,7 +22,6 @@ class ScrapeTest extends PHPUnit_Framework_TestCase
 
     public function testGetItemData()
     {
-    	$html = file_get_contents('tests'.DIRECTORY_SEPARATOR.'test_data.html');
         $dom = Scraper::getDom($this->html);
         $itemData = Scraper::getItemData($dom);
 
@@ -32,6 +34,4 @@ class ScrapeTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($itemData['unit_price'],'3.00');
         $this->assertEquals($itemData['description'],'Apricots');
     }
-
-
 }

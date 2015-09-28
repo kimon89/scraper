@@ -19,10 +19,10 @@ class Scraper{
 		$agent= 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-		curl_setopt( $ch, CURLOPT_COOKIESESSION, true );
+		curl_setopt($ch, CURLOPT_COOKIESESSION, true );
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt( $ch, CURLOPT_COOKIEJAR,   'cookie');
-		curl_setopt( $ch, CURLOPT_COOKIEFILE, 'cookie' );
+		curl_setopt($ch, CURLOPT_COOKIEJAR,   'cookie');
+		curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookie' );
 		curl_setopt($ch, CURLOPT_URL,$url);
 
 		$res = curl_exec($ch);
